@@ -10,23 +10,23 @@ function. If the probability is greater than a random number between 0 and 1, as
 import random
 import numpy as np
 import math
-def temperature(iterator):
-    temp =  10-0.000001*iterator
-    
-    return temp; 
+import matplotlib.pyplot as plt
+
+temperatures = np.linspace(1000, 1, 10000000)
 def objective(x): 
-    return x*x - 6
+    return (x-1)*(x-2)*(x-3)*(x-5)*(x-6)*(x-9)
 def probability_acceptance(i, u, t): 
     difference = objective(i) - objective(u)
     return math.exp(difference/(t))
-initial_value = -5; 
+values = []
+initial_value = -2; 
 intermediate_value = initial_value; 
-iterator = 0;
-while(iterator < 10000000): 
+for i in temperatures :
     random_closeby_value = intermediate_value + np.random.uniform(-0.01, 0.01)
-    
-    if(probability_acceptance(intermediate_value, random_closeby_value, temperature(iterator)) > random.random()): 
-        
+    if(probability_acceptance(intermediate_value, random_closeby_value, i) > random.random()):         
         intermediate_value = random_closeby_value    
-    iterator+=1 
+        values.append(objective(intermediate_value))
 print(intermediate_value, objective(intermediate_value))
+x_values = np.linspace(1,len(values), len(values))
+plt.plot(x_values, values)
+plt.show()
