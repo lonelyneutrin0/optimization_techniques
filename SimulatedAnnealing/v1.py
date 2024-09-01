@@ -23,9 +23,10 @@ initial_value = -2;
 intermediate_value = initial_value; 
 for i in temperatures :
     random_closeby_value = intermediate_value + np.random.uniform(-0.01, 0.01)
+    values.append(objective(random_closeby_value))
     if(probability_acceptance(intermediate_value, random_closeby_value, i) > random.random()):         
         intermediate_value = random_closeby_value    
-        values.append(objective(intermediate_value))
+        
 print(intermediate_value, objective(intermediate_value))
 x_values = np.linspace(1,len(values), len(values))
 plt.plot(x_values, values)

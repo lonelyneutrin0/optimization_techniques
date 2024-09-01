@@ -1,16 +1,5 @@
-import PIL #imports PIL library needed for pillow
-from PIL import Image # imports Image class from pillow
 import numpy as np
-import math
-import random
-from itertools import combinations
-
 from scipy.spatial import KDTree
-#Generates the image matrix
-im=Image.open("SimulatedAnnealing/image.png")
-image_matrix = np.array(im)
-temperatures = np.linspace(500   ,1, 90000)
-
 
 def compute_potential_energy(image):
     height, width, _ = image.shape
@@ -45,3 +34,8 @@ def compute_potential_energy(image):
                 total_energy += (spatial_distance**(-6) - spatial_distance**(-12)) * (256-rgb_diff)
     
     return total_energy
+
+# Example usage
+image = np.random.randint(0, 256, (100, 100, 3), dtype=np.uint8)
+total_energy = compute_potential_energy(image)
+print(f'Total Potential Energy: {total_energy}')
