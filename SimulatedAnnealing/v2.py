@@ -1,17 +1,20 @@
-import PIL #imports PIL library needed for pillow
-from PIL import Image # imports Image class from pillow
+import PIL
+from PIL import Image
 import numpy as np
 import math
-import random
-from itertools import combinations
-
+import random   
 from scipy.spatial import KDTree
-#Generates the image matrix
-im=Image.open("SimulatedAnnealing/image.png")
+import time
+import matplotlib.pyplot as plt
+
+# Load and convert the image to a NumPy array
+im = Image.open("SimulatedAnnealing/image.png")
 image_matrix = np.array(im)
-temperatures = np.linspace(500   ,1, 90000)
-
-
+final_matrix = np.copy(image_matrix)  # Make sure to copy the matrix
+start_temp = 1000
+temperatures = np.linspace(start_temp, 1, 100000)
+energies = []
+x = np.linspace(1, temperatures.size, temperatures.size)
 def compute_potential_energy(image):
     height, width, _ = image.shape
     
@@ -24,24 +27,59 @@ def compute_potential_energy(image):
     
     # Initialize total energy
     total_energy = 0.0
-
+   
     # Iterate over each pixel and compute its potential energy with neighbors
     for i, pos in enumerate(pixel_positions):
+        
         pixel_rgb = pixels[i]
-        distances, indices = kdtree.query([pos], k=5)  # k=9 to include the pixel itself and 8 neighbors
+        distances, indices = kdtree.query([pos], k=5)  
         
         for dist, idx in zip(distances[0], indices[0]):
             if idx != i:  # Skip self
                 neighbor_pos = pixel_positions[idx]
                 neighbor_rgb = pixels[idx]
-                
-                # Compute spatial distance
+     
                 spatial_distance = np.linalg.norm(pos - neighbor_pos)
                 
-                # Compute RGB difference norm
+              
                 rgb_diff = np.linalg.norm(pixel_rgb - neighbor_rgb)
                 
-                # Compute potential energy contribution
-                total_energy += (spatial_distance**(-6) - spatial_distance**(-12)) * (256-rgb_diff)
-    
+            
+                if spatial_distance > 0:
+                    total_energy += (rgb_diff-125)/125*spatial_distance
+        
     return total_energy
+
+def probability_acceptance(old_energy, new_energy, temp): 
+    if temp == 0: 
+        return 0
+    return math.exp((old_energy - new_energy) / temp)
+
+for temp in temperatures: 
+    first = False
+    prior_time = time.perf_counter()
+    temp_matrix = np.copy(final_matrix)
+    ran_row1 = random.randint(0, image_matrix.shape[0] - 1)
+    ran_col1 = random.randint(0, image_matrix.shape[1] - 1)
+    ran_row2 = random.randint(0, image_matrix.shape[0] - 1)
+    ran_col2 = random.randint(0, image_matrix.shape[1] - 1)
+    
+    temp_pixel = temp_matrix[ran_row1, ran_col1].copy()
+    temp_matrix[ran_row1, ran_col1] = temp_matrix[ran_row2, ran_col2]
+    temp_matrix[ran_row2, ran_col2] = temp_pixel
+    
+    old_energy = compute_potential_energy(final_matrix)
+    new_energy = compute_potential_energy(temp_matrix)
+    energies.append(new_energy)
+    
+    if probability_acceptance(old_energy, new_energy, temp) > random.random(): 
+        final_matrix = temp_matrix
+        
+    if(temp == start_temp):    
+        post_time = time.perf_counter()
+        print((post_time - prior_time)*temperatures.size/60)
+
+plt.plot(x, energies)
+plt.show()
+final_image = Image.fromarray(np.uint8(final_matrix))
+final_image.show()
