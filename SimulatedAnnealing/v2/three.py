@@ -12,35 +12,40 @@ im = Image.open("SimulatedAnnealing/image.png")
 image_matrix = np.array(im)
 height, width, rgb = image_matrix.shape
 start_temp = 1000 
-temperatures = np.linspace(start_temp, 1, 100000) # use temperature.size for number of iterations 
+temperatures = np.linspace(start_temp, 1, 200000) # use temperature.size for number of iterations 
 x = temperatures[::1]
-energies = []
+
 final_matrix = image_matrix
-norm_differences = np.linalg.norm(image_matrix[:, :, np.newaxis, :] - image_matrix.reshape(-1, 3), axis=3)
-norm_differences = norm_differences - np.full(norm_differences.shape, 125)
-
-distance_matrix = np.empty((height, width, 2))
-for i in range(height): 
-    for j in range(width): 
-        if(i == j): 
-            distance_matrix[i,j] = float('inf') 
-        distance_matrix[i,j] = [i,j]
-
-distance_matrix = np.multiply(np.linalg.norm(distance_matrix[:, :, np.newaxis, :] - distance_matrix.reshape(-1 ,2), axis = 3), np.full((height, width, height*width), 125))
-distance_matrix[distance_matrix == 0] = float('inf')
-
-def energy(image_matrix): 
-    prior_time = time.perf_counter()
-    norm_differences = np.linalg.norm(image_matrix[:, :, np.newaxis, :] - image_matrix.reshape(-1, 3), axis=3)
-    norm_differences = norm_differences - np.full(norm_differences.shape, 125)
-    energy_matrix = np.divide(norm_differences, distance_matrix)
-    post_time = time.perf_counter()
-    return np.sum(energy_matrix)
+def get_4_connected_neighbors(matrix, i, j):
+    matrix = np.array(matrix)  # Ensure matrix is a NumPy array
+    rows, cols, se = matrix.shape
+    
+    # Define potential neighbors relative positions (delta_i, delta_j)
+    shifts = np.array([[-1, 0], [1, 0], [0, -1], [0, 1]])
+    
+    # Compute the new indices
+    neighbors = np.array([(i + di, j + dj) for di, dj in shifts])
+    
+    # Filter out neighbors that are out of bounds
+    valid_neighbors = []
+    for ni, nj in neighbors:
+        if 0 <= ni < rows and 0 <= nj < cols:
+            valid_neighbors.append((ni, nj))
+    
+    return np.asarray(valid_neighbors)
 
 def probability_acceptance(old_energy, new_energy, temp): 
     if temp == 0: 
         return 0
     return math.exp((old_energy - new_energy) / temp)
+
+def energy(image_matrix): 
+    energy = 0
+    for i in range(height): 
+        for j in range(i): 
+            for neighbor in get_4_connected_neighbors(image_matrix, i ,j): 
+                energy += np.linalg.norm(image_matrix[i, j] - image_matrix[neighbor])
+    return energy
 
 for i in temperatures: 
     prior_time = time.perf_counter()
