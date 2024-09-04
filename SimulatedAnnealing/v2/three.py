@@ -17,6 +17,7 @@ x = temperatures[::1]
 
 final_matrix = image_matrix
 def get_4_connected_neighbors(matrix, i, j):
+  
     matrix = np.array(matrix)  # Ensure matrix is a NumPy array
     rows, cols, se = matrix.shape
     
@@ -31,7 +32,7 @@ def get_4_connected_neighbors(matrix, i, j):
     for ni, nj in neighbors:
         if 0 <= ni < rows and 0 <= nj < cols:
             valid_neighbors.append((ni, nj))
-    
+   
     return np.asarray(valid_neighbors)
 
 def probability_acceptance(old_energy, new_energy, temp): 
@@ -41,12 +42,14 @@ def probability_acceptance(old_energy, new_energy, temp):
 
 def energy(image_matrix): 
     energy = 0
+ 
     for i in range(height): 
         for j in range(i): 
             for neighbor in get_4_connected_neighbors(image_matrix, i ,j): 
                 energy += np.linalg.norm(image_matrix[i, j] - image_matrix[neighbor])
+ 
     return energy
-
+print(energy(image_matrix=image_matrix))
 for i in temperatures: 
     prior_time = time.perf_counter()
     temp_matrix = np.copy(final_matrix)
