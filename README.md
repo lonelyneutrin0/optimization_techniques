@@ -17,6 +17,22 @@ It uses for loops with time complexity O(4n^2) to determine the potential energy
 ### v2.4
 This version uses NumPy to create a `height*width X height*width` matrix which contains the pairwise norm differences of the RGB values of each pixel. Multiplying by the required mask followed by summation provides a method of determining potential energy using vectorized NumPy functions. 
 `number_iterations = 200000`, `initial_temp = 1000`.
+Due to hardware constraints and the memory usage of this method, further versions will be looked into. 
+
+### v2.5 
+This version uses an O(n) time complexity method with partial vectorization. It aims to balance the time and space complexity of the algorithm to conform to the hardware constraints. 
+`initial_temp = 1000` 
+`number_iterations = 200000`
+
+### v2.6
+This version uses SciPy and sparse matrix computations to improve the amount of time used. 
+`initial_temp = 1000` 
+`number_iterations = 200000`
+
+### v2.7
+This version uses PyTorch rather than NumPy to see if there are any improvements in time or memory usage.
+`initial_temp = 1000` 
+`number_iterations = 200000`
 
 # The QUBO Problem
 
