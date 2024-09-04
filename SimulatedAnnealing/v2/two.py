@@ -35,31 +35,32 @@ def energy(image_matrix):
     norm_differences = norm_differences - np.full(norm_differences.shape, 125)
     energy_matrix = np.divide(norm_differences, distance_matrix)
     post_time = time.perf_counter()
+    print(post_time - prior_time)
     return np.sum(energy_matrix)
 
 def probability_acceptance(old_energy, new_energy, temp): 
     if temp == 0: 
         return 0
     return math.exp((old_energy - new_energy) / temp)
+energy(image_matrix=image_matrix)
 
-
-# for i in temperatures: 
-#     prior_time = time.perf_counter()
-#     temp_matrix = np.copy(final_matrix)
-#     ran_row1 = random.randint(0, image_matrix.shape[0] - 1)
-#     ran_col1 = random.randint(0, image_matrix.shape[1] - 1)
-#     ran_row2 = random.randint(0, image_matrix.shape[0] - 1)
-#     ran_col2 = random.randint(0, image_matrix.shape[1] - 1)
+for i in temperatures: 
+    prior_time = time.perf_counter()
+    temp_matrix = np.copy(final_matrix)
+    ran_row1 = random.randint(0, image_matrix.shape[0] - 1)
+    ran_col1 = random.randint(0, image_matrix.shape[1] - 1)
+    ran_row2 = random.randint(0, image_matrix.shape[0] - 1)
+    ran_col2 = random.randint(0, image_matrix.shape[1] - 1)
     
-#     temp_pixel = temp_matrix[ran_row1, ran_col1].copy()
-#     temp_matrix[ran_row1, ran_col1] = temp_matrix[ran_row2, ran_col2]
-#     temp_matrix[ran_row2, ran_col2] = temp_pixel
+    temp_pixel = temp_matrix[ran_row1, ran_col1].copy()
+    temp_matrix[ran_row1, ran_col1] = temp_matrix[ran_row2, ran_col2]
+    temp_matrix[ran_row2, ran_col2] = temp_pixel
   
-#     if probability_acceptance(energy(final_matrix), energy(temp_matrix), i) > random.random(): 
-#         final_matrix = temp_matrix
-#     if(i == start_temp):    
-#         post_time = time.perf_counter()
-#         print((post_time - prior_time)*temperatures.size/60)
+    if probability_acceptance(energy(final_matrix), energy(temp_matrix), i) > random.random(): 
+        final_matrix = temp_matrix
+    if(i == start_temp):    
+        post_time = time.perf_counter()
+        print((post_time - prior_time)*temperatures.size/60)
 
-# final_image = Image.fromarray(np.uint8(final_matrix))
-# final_image.show()
+final_image = Image.fromarray(np.uint8(final_matrix))
+final_image.show()
