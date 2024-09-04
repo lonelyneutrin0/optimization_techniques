@@ -12,22 +12,16 @@ im = Image.open("SimulatedAnnealing/image.png")
 image_matrix = np.array(im)
 height, width, rgb = image_matrix.shape
 start_temp = 1000 
-temperatures = np.linspace(start_temp, 1, 200000) # use temperature.size for number of iterations 
+temperatures = np.linspace(start_temp, 1, 200000)  
 x = temperatures[::1]
 
 final_matrix = image_matrix
 def get_4_connected_neighbors(matrix, i, j):
   
-    matrix = np.array(matrix)  # Ensure matrix is a NumPy array
+    matrix = np.array(matrix) 
     rows, cols, se = matrix.shape
-    
-    # Define potential neighbors relative positions (delta_i, delta_j)
     shifts = np.array([[-1, 0], [1, 0], [0, -1], [0, 1]])
-    
-    # Compute the new indices
     neighbors = np.array([(i + di, j + dj) for di, dj in shifts])
-    
-    # Filter out neighbors that are out of bounds
     valid_neighbors = []
     for ni, nj in neighbors:
         if 0 <= ni < rows and 0 <= nj < cols:

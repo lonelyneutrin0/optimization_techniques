@@ -28,7 +28,7 @@ def energy(image):
     diffs = image[:, np.newaxis, :] - image[np.newaxis, :, :]
     norm_diffs = np.linalg.norm(diffs, axis=-1)
     norm_diffs = 0.5 * (norm_diffs + norm_diffs.T)
-    print(time.perf_counter() - prior)
+    print(time.perf_counter()-prior)
     return np.sum(norm_diffs * mask)
 energy(image_matrix)
 # for i in temperatures: 
