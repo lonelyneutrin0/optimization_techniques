@@ -10,7 +10,7 @@ final_matrix = image_matrix
 height, width, rgb = image_matrix.shape 
 energies = []
 start_temp = 1000
-temperatures = np.linspace(start_temp, 1, 1000000)
+temperatures = np.linspace(start_temp, 1, 300000)
 x = temperatures[::-1]
 def probability_acceptance(old_energy, new_energy, temp): 
     if temp == 0: 
@@ -18,26 +18,24 @@ def probability_acceptance(old_energy, new_energy, temp):
     return math.exp((old_energy - new_energy) / temp)
 
 def energy(image):
-    left = image.copy()
-    left = np.roll(left, 1, axis=1)
-    left[:, 0] = image[:, 0]
-    diff_l = np.linalg.norm(image- left, axis=-1)
     
-    right = image.copy()
-    right = np.roll(right, -1, axis=1)
-    right[:, -1] = image[:, -1]
-    diff_r = np.linalg.norm(image- right, axis=-1)
+    left = np.roll(image, 1, axis=1)
+    right = np.roll(image, -1, axis=1)
+    down = np.roll(image, -1, axis=0)
+    up = np.roll(image, 1, axis=0)
     
-    up = image.copy()
-    up = np.roll(up, -1, axis=0)
-    up[0, :] = image[0, :]
+    diff_l = np.linalg.norm(image-left, axis=-1)
+    diff_l[:, 0] = 0
+    
+    diff_r = np.linalg.norm(image-right, axis=-1)
+    diff_r[:, -1] = 0    
+   
     diff_u = np.linalg.norm(image- up, axis=-1)
+    diff_u[0, :] = 0
     
-    down = image.copy() 
-    down = np.roll(down, 1, axis=0)
-    down[-1, :] = image[-1, :]
     diff_d = np.linalg.norm(image- down, axis=-1)
-    
+    diff_d[-1, :] = 0
+   
     return np.sum(diff_u+diff_d+diff_r+diff_l)
 # print(energy(image=image_matrix))
 for i in temperatures: 
