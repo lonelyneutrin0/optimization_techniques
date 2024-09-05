@@ -20,19 +20,10 @@ This version uses NumPy to create a `height*width X height*width` matrix which c
 Due to hardware constraints and the memory usage of this method, further versions will be looked into. 
 
 ### v2.5 
-I got the idea to use triangle inequality to approximate norm differences. Perhaps by offsetting the matrices and adding them up, I can figure out an upper bound estimate of the norm difference. Minimizing this might also, to some extent minimize the original norm difference.
+The norm differences were computed using appropriately translated matrices. This is an O(1) algorithm using NumPy's vectorized functions and limits its intermediate matrix size to `height`, which allows for large image processing within reasonable memory and time limits. 
 `initial_temp = 1000` 
 `number_iterations = 200000`
 
-### v2.6
-This version uses SciPy and sparse matrix computations to improve the amount of time used. 
-`initial_temp = 1000` 
-`number_iterations = 200000`
-
-### v2.7
-This version uses PyTorch rather than NumPy to see if there are any improvements in time or memory usage.
-`initial_temp = 1000` 
-`number_iterations = 200000`
 
 # The QUBO Problem
 
