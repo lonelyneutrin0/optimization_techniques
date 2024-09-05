@@ -20,7 +20,7 @@ This version uses NumPy to create a `height*width X height*width` matrix which c
 Due to hardware constraints and the memory usage of this method, further versions will be looked into. 
 
 ### v2.5 
-This version uses an O(n) time complexity method with partial vectorization. It aims to balance the time and space complexity of the algorithm to conform to the hardware constraints. 
+I got the idea to use triangle inequality to approximate norm differences. Perhaps by offsetting the matrices and adding them up, I can figure out an upper bound estimate of the norm difference. Minimizing this might also, to some extent minimize the original norm difference.
 `initial_temp = 1000` 
 `number_iterations = 200000`
 
