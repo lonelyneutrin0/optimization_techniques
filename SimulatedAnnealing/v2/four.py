@@ -6,17 +6,15 @@ import time
 import random
 import math
 
-# Load the image and convert it to a NumPy array
 im = Image.open("SimulatedAnnealing/image.png")
 image_matrix = np.array(im)
 final_matrix = image_matrix
 height, width, rgb = image_matrix.shape
 
-# Initialize temperature settings
+
 start_temp = 1000
 temperatures = np.linspace(start_temp, 1, 200000)
 
-# Create a mask for calculating the energy
 mask = np.eye(height * width, k=1) + np.eye(height * width, k=-1)
 def probability_acceptance(old_energy, new_energy, temp): 
     if temp == 0: 
@@ -30,7 +28,7 @@ def energy(image):
     norm_diffs = 0.5 * (norm_diffs + norm_diffs.T)
     print(time.perf_counter()-prior)
     return np.sum(norm_diffs * mask)
-energy(image_matrix)
+print(energy(image_matrix))
 # for i in temperatures: 
 #     prior_time = time.perf_counter()
 #     temp_matrix = np.copy(final_matrix)

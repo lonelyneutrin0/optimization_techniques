@@ -12,10 +12,17 @@ im = Image.open("SimulatedAnnealing/image.png")
 image_matrix = np.array(im)
 height, width, rgb = image_matrix.shape
 start_temp = 1000 
-temperatures = np.linspace(start_temp, 1, 200000)  
+temperatures = np.linspace(start_temp, 1, 100000)  
 x = temperatures[::1]
 
 final_matrix = image_matrix
+
+def probability_acceptance(old_energy, new_energy, temp): 
+    if temp == 0: 
+        return 0
+    return math.exp((old_energy - new_energy) / temp)
+
+
 def get_4_connected_neighbors(matrix, i, j):
   
     matrix = np.array(matrix) 
@@ -28,11 +35,6 @@ def get_4_connected_neighbors(matrix, i, j):
             valid_neighbors.append((ni, nj))
    
     return np.asarray(valid_neighbors)
-
-def probability_acceptance(old_energy, new_energy, temp): 
-    if temp == 0: 
-        return 0
-    return math.exp((old_energy - new_energy) / temp)
 
 def energy(image_matrix): 
     energy = 0
