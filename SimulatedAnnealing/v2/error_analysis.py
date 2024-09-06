@@ -49,6 +49,7 @@ def energy_second(image_matrix):
             energy+=diff 
     return energy
 err = 0
-for i in range(10000): 
+for i in range(100): 
     image_matrix = 256*np.random.rand(100,100,3)
-    print(energy_first(image_matrix) - energy_second(image_matrix))
+    err += energy_first(image_matrix) - energy_second(image_matrix)
+print(err)
