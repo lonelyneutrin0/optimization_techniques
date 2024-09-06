@@ -4,7 +4,6 @@ import math
 import matplotlib.pyplot as plt 
 import random
 from PIL import Image
-import PIL 
 import scipy.spatial as spat
 import time
 
@@ -13,7 +12,8 @@ image_matrix = np.array(im)
 height, width, rgb = image_matrix.shape
 start_temp = 1000 
 temperatures = np.linspace(start_temp, 1, 100000)  
-x = temperatures[::1]
+x = temperatures[::-1]
+energies = []
 
 final_matrix = image_matrix
 
@@ -45,7 +45,7 @@ def energy(image_matrix):
                 energy += np.linalg.norm(image_matrix[i, j] - image_matrix[neighbor])
  
     return energy
-print(energy(image_matrix=image_matrix))
+
 for i in temperatures: 
     prior_time = time.perf_counter()
     temp_matrix = np.copy(final_matrix)
@@ -57,12 +57,15 @@ for i in temperatures:
     temp_pixel = temp_matrix[ran_row1, ran_col1].copy()
     temp_matrix[ran_row1, ran_col1] = temp_matrix[ran_row2, ran_col2]
     temp_matrix[ran_row2, ran_col2] = temp_pixel
-  
-    if probability_acceptance(energy(final_matrix), energy(temp_matrix), i) > random.random(): 
+    temp_energy = energy(temp_matrix)
+    energies.append(temp_energy)
+    if probability_acceptance(energy(final_matrix), temp_energy, i) > random.random(): 
         final_matrix = temp_matrix
     if(i == start_temp):    
         post_time = time.perf_counter()
         print((post_time - prior_time)*temperatures.size/60)
 
 final_image = Image.fromarray(np.uint8(final_matrix))
+plt.plot(x, energies)
+plt.show()
 final_image.show()

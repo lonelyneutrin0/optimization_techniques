@@ -7,7 +7,7 @@ from PIL import Image
 pixel_data = np.random.randint(
     low=0, 
     high=256,
-    size=(75, 75, 3),
+    size=(500,500, 3),
     dtype=np.uint8
 )
 

@@ -6,11 +6,15 @@ import math
 import matplotlib.pyplot as plt 
 im = Image.open("SimulatedAnnealing/image.png")
 image_matrix = np.array(im)
-final_matrix = image_matrix
 height, width, rgb = image_matrix.shape 
-start_temp = 1000
-temperatures = np.linspace(start_temp, 1, 2000000) 
+start_temp = 10000
+temperatures = np.linspace(start_temp, 1, 1000000)
+x = temperatures[::-1]
+energies = []
+final_matrix = image_matrix
 def probability_acceptance(old_energy, new_energy, temp): 
+    if temp == 0:
+        return 0
     return math.exp((old_energy - new_energy) / temp)
 
 def energy(image):
@@ -31,8 +35,8 @@ def energy(image):
     
     diff_d = np.linalg.norm(image- down, axis=-1)
     diff_d[-1, :] = 0
-   
-    return np.sum(diff_u+diff_d+diff_r+diff_l)
+    return np.sum(diff_d)
+    # return np.sum(diff_u+diff_d+diff_r+diff_l)
 # print(energy(image=image_matrix))
 for i in temperatures: 
     if(i == start_temp): 
@@ -46,13 +50,16 @@ for i in temperatures:
     temp_pixel = temp_matrix[ran_row1, ran_col1].copy()
     temp_matrix[ran_row1, ran_col1] = temp_matrix[ran_row2, ran_col2]
     temp_matrix[ran_row2, ran_col2] = temp_pixel
-  
-    if probability_acceptance(energy(final_matrix), energy(temp_matrix), i) > random.random(): 
+    temp_energy = energy(temp_matrix)
+    energies.append(temp_energy)
+    if probability_acceptance(energy(final_matrix), temp_energy, i) > random.random(): 
         final_matrix = temp_matrix
     if(i == start_temp):    
         post_time = time.perf_counter()
         print((post_time - prior_time)*temperatures.size/60)
 
+plt.plot(x, energies)
+plt.show()
 final_image = Image.fromarray(np.uint8(final_matrix))
 final_image.save("SimulatedAnnealing/finalimage.png")
 final_image.show()
