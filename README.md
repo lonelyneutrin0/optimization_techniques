@@ -24,6 +24,9 @@ The norm differences were computed using appropriately translated matrices. This
 `initial_temp = 1000` 
 `number_iterations = 200000`
 
+### v2.6 
+New Potential Energy Function: $$E = \sum_{i \neq j} \left( \alpha \, e^{-\beta d_{ij}} \Delta C_{ij}^2 - \gamma \, e^{-\delta d_{ij}} \Delta C_{ij}^2$$
+`10E+6` iterations and `initial_temp = 1000` is standard from now on. 
 
 # The QUBO Problem
 
